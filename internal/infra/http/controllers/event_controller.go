@@ -71,21 +71,30 @@ func (c *EventController) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		var event event.Event
-		json.NewDecoder(r.Body).Decode(&event)
+
+		err := json.NewDecoder(r.Body).Decode(&event)
+		if err != nil {
+			fmt.Printf("EventController.Create(): %s", err)
+			err = internalServerError(w, err)
+			if err != nil {
+				fmt.Printf("EventController.Create(): %s", err)
+			}
+			return
+		}
 
 		res, err := (*c.service).Create(event)
 		if err != nil {
-			fmt.Printf("EventController.CreateOne(): %s", err)
+			fmt.Printf("EventController.Create(): %s", err)
 			err = internalServerError(w, err)
 			if err != nil {
-				fmt.Printf("EventController.CreateOne(): %s", err)
+				fmt.Printf("EventController.Create(): %s", err)
 			}
 			return
 		}
 
 		err = success(w, res)
 		if err != nil {
-			fmt.Printf("EventController.CreateOne(): %s", err)
+			fmt.Printf("EventController.Create(): %s", err)
 		}
 
 	}
@@ -94,8 +103,18 @@ func (c *EventController) Create() http.HandlerFunc {
 
 func (c *EventController) Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		var event event.Event
-		json.NewDecoder(r.Body).Decode(&event)
+
+		err := json.NewDecoder(r.Body).Decode(&event)
+		if err != nil {
+			fmt.Printf("EventController.Update(): %s", err)
+			err = internalServerError(w, err)
+			if err != nil {
+				fmt.Printf("EventController.Update(): %s", err)
+			}
+			return
+		}
 
 		res, err := (*c.service).Update(event)
 
